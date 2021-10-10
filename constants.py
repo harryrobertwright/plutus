@@ -1,1 +1,3 @@
-INTERVALS = ["1h",]
+INTERVALS = [
+    "1h",
+]

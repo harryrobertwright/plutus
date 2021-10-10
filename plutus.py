@@ -201,3 +201,99 @@ class Pair:
             return lows.index(min(filtered_lows))
 
         return None
+
+    def is_up_fractal(
+        self, interval: str, index: int, count: Union[int, None] = None
+    ) -> Union[bool, None]:
+        """Checks whether a candle is an up fractal.
+
+        Checks to see if the low prices of a given candle's adjacent-left
+        and adjacent-right neighbours are both greater than its own low
+        price.
+
+        Args:
+            interval: A Binance Kline interval.
+            index: A number that represents the index of the candle to be
+            checked.
+            count: A number of candles to be included in the fractal assement.
+            This must be an even number and not be lower than three.
+
+        Returns:
+            A boolean value set to True if the candle is an up fractal,
+            otherwise False. If any of the candles are unable to be found or
+            an invalid count is given, it returns None.
+        """
+        candle: Union[list, None] = self.get_candle(interval, index)
+
+        if not count:
+            count = 3
+
+        if count < 3 or (count % 2) == 0:
+            return None
+
+        candles_each_side_to_check = int((count - 1) / 2)
+
+        for offset in range(1, candles_each_side_to_check + 1):
+            adjacent_left: Union[list, None] = self.get_candle(interval, index + offset)
+            adjacent_right: Union[list, None] = self.get_candle(
+                interval, index - offset
+            )
+
+            if candle and adjacent_left and adjacent_right:
+                if Decimal(candle[3]) >= Decimal(adjacent_left[3]) or Decimal(
+                    candle[3]
+                ) >= Decimal(adjacent_right[3]):
+                    return False
+                continue
+
+            return None
+
+        return True
+
+    def is_down_fractal(
+        self, interval: str, index: int, count: Union[int, None] = None
+    ) -> Union[bool, None]:
+        """Checks whether a candle is an up fractal.
+
+        Checks to see if the low prices of a given candle's adjacent-left
+        and adjacent-right neighbours are both greater than its own low
+        price.
+
+        Args:
+            interval: A Binance Kline interval.
+            index: A number that represents the index of the candle to be
+            checked.
+            count: A number of candles to be included in the fractal assement.
+            This must be an even number and not be lower than three.
+
+        Returns:
+            A boolean value set to True if the candle is an up fractal,
+            otherwise False. If any of the candles are unable to be found or
+            an invalid count is given, it returns None.
+        """
+        candle: Union[list, None] = self.get_candle(interval, index)
+
+        if not count:
+            count = 3
+
+        if count < 3 or (count % 2) == 0:
+            return None
+
+        candles_each_side_to_check = int((count - 1) / 2)
+
+        for offset in range(1, candles_each_side_to_check + 1):
+            adjacent_left: Union[list, None] = self.get_candle(interval, index + offset)
+            adjacent_right: Union[list, None] = self.get_candle(
+                interval, index - offset
+            )
+
+            if candle and adjacent_left and adjacent_right:
+                if Decimal(candle[2]) <= Decimal(adjacent_left[2]) or Decimal(
+                    candle[2]
+                ) <= Decimal(adjacent_right[2]):
+                    return False
+                continue
+
+            return None
+
+        return True
